@@ -1,0 +1,16 @@
+.{
+    .name = "rocket-fighters",
+    .version = "0.0.0",
+    //.minimum_zig_version = "0.11.0",
+    .dependencies = .{
+        .@"raylib-zig" = .{
+            .url = "https://github.com/Not-Nik/raylib-zig/archive/devel.tar.gz",
+            .hash = "12207eacaebbfe7e40dbbe20e27b8ba43dd35c46338640a60cfe9edd2be6f843c82a",
+        },
+    },
+    .paths = .{
+        "build.zig",
+        "build.zig.zon",
+        "src",
+    },
+}
