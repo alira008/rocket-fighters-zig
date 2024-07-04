@@ -1,12 +1,15 @@
 const rl = @import("raylib");
+const Laserbolt = @import("weapons/laser-bolt.zig").Laserbolt;
+const Laserbolts = @import("weapons/laser-bolt.zig").Laserbolts;
 const Self = @This();
 
 spritesheet: rl.Texture2D,
 sprite_rect: rl.Rectangle,
 position: rl.Vector2,
-comptime speed: f32 = 2.0,
+speed: f32 = 2.0,
+laserbolts: Laserbolts = undefined,
 
-pub fn init(spaceship_spritesheet: rl.Texture2D) Self {
+pub fn init(spaceship_spritesheet: rl.Texture2D, laserbolt_spritesheet: rl.Texture2D) Self {
     const screen_width: f32 = @floatFromInt(rl.getScreenWidth());
     const screen_height: f32 = @floatFromInt(rl.getScreenHeight());
     const position: rl.Vector2 = .{ .x = screen_width / 2.0, .y = screen_height / 2.0 };
@@ -18,15 +21,18 @@ pub fn init(spaceship_spritesheet: rl.Texture2D) Self {
         .spritesheet = spaceship_spritesheet,
         .sprite_rect = sprite_rect,
         .position = position,
+        .laserbolts = Laserbolts.init(laserbolt_spritesheet),
     };
 }
 
-pub fn update(self: Self) void {
-    _ = self;
+pub fn update(self: *Self) void {
+    self.laserbolts.update();
+    self.laserbolts.updateAvailable();
 }
 
 pub fn draw(self: Self) void {
     rl.drawTextureRec(self.spritesheet, self.sprite_rect, self.position, rl.Color.white);
+    self.laserbolts.draw();
 }
 
 pub fn moveUp(self: *Self) void {
@@ -63,4 +69,12 @@ pub fn moveRight(self: *Self) void {
     }
 
     self.position.x += self.speed;
+}
+
+pub fn fireLaser(self: *Self) void {
+    if (self.laserbolts.amount_available <= 0) return;
+
+    const sprite_height: f32 = @floatFromInt(self.spritesheet.height);
+    const height_to_spawn = self.position.y - sprite_height / 2.0;
+    self.laserbolts.fireLaser(self.position, height_to_spawn);
 }
