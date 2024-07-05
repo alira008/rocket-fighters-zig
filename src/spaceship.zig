@@ -35,18 +35,88 @@ pub fn draw(self: Self) void {
     self.laserbolts.draw();
 }
 
+fn canMoveUp(self: *Self) bool {
+    return self.position.y - self.speed > 0;
+}
+
+fn canMoveRight(self: *Self) bool {
+    const screen_width: f32 = @floatFromInt(rl.getScreenWidth());
+    const sprite_width: f32 = @floatFromInt(self.spritesheet.width);
+    return self.position.x + self.speed < screen_width - sprite_width;
+}
+
+fn canMoveLeft(self: *Self) bool {
+    return self.position.x - self.speed > 0;
+}
+
+fn canMoveDown(self: *Self) bool {
+    const screen_height: f32 = @floatFromInt(rl.getScreenHeight());
+    const sprite_height: f32 = @floatFromInt(self.spritesheet.height);
+    return self.position.y + self.speed < screen_height - sprite_height;
+}
+
 pub fn moveUp(self: *Self) void {
-    if (self.position.y - self.speed < 0) {
+    if (!self.canMoveUp()) {
         return;
     }
 
     self.position.y -= self.speed;
 }
 
+pub fn moveUpRight(self: *Self) void {
+    if (!self.canMoveUp()) {
+        return self.moveRight();
+    } else if (!self.canMoveRight()) {
+        return self.moveUp();
+    }
+
+    const normalized_speed = rl.math.normalize(self.speed, 0, self.speed);
+
+    self.position.y -= normalized_speed;
+    self.position.x += normalized_speed;
+}
+
+pub fn moveDownRight(self: *Self) void {
+    if (!self.canMoveDown()) {
+        return self.moveRight();
+    } else if (!self.canMoveRight()) {
+        return self.moveDown();
+    }
+
+    const normalized_speed = rl.math.normalize(self.speed, 0, self.speed);
+
+    self.position.y += normalized_speed;
+    self.position.x += normalized_speed;
+}
+
+pub fn moveUpLeft(self: *Self) void {
+    if (!self.canMoveUp()) {
+        return self.moveLeft();
+    } else if (!self.canMoveLeft()) {
+        return self.moveUp();
+    }
+
+    const normalized_speed = rl.math.normalize(self.speed, 0, self.speed);
+
+    self.position.y -= normalized_speed;
+    self.position.x -= normalized_speed;
+}
+
+pub fn moveDownLeft(self: *Self) void {
+    if (!self.canMoveDown()) {
+        return self.moveLeft();
+    } else if (!self.canMoveLeft()) {
+        return self.moveDown();
+    }
+
+    const normalized_speed = rl.math.normalize(self.speed, 0, self.speed);
+
+    self.position.y += normalized_speed;
+    self.position.x -= normalized_speed;
+}
+
 pub fn moveDown(self: *Self) void {
-    const screen_height: f32 = @floatFromInt(rl.getScreenHeight());
-    const sprite_height: f32 = @floatFromInt(self.spritesheet.height);
-    if (self.position.y + self.speed > screen_height - sprite_height) {
+    if (!self.canMoveDown()) {
         return;
     }
 
@@ -54,7 +124,7 @@ pub fn moveDown(self: *Self) void {
 }
 
 pub fn moveLeft(self: *Self) void {
-    if (self.position.x - self.speed < 0) {
+    if (!self.canMoveLeft()) {
         return;
     }
 
@@ -62,9 +132,7 @@ pub fn moveLeft(self: *Self) void {
 }
 
 pub fn moveRight(self: *Self) void {
-    const screen_width: f32 = @floatFromInt(rl.getScreenWidth());
-    const sprite_width: f32 = @floatFromInt(self.spritesheet.width);
-    if (self.position.x + self.speed > screen_width - sprite_width) {
+    if (!self.canMoveRight()) {
         return;
     }
 

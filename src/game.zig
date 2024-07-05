@@ -44,16 +44,21 @@ pub fn update(self: *Self) void {
 }
 
 pub fn handleInputs(self: *Self) void {
-    if (rl.isKeyDown(rl.KeyboardKey.key_up)) {
+    if (rl.isKeyDown(rl.KeyboardKey.key_up) and rl.isKeyDown(rl.KeyboardKey.key_right)) {
+        self.spaceship.moveUpRight();
+    } else if (rl.isKeyDown(rl.KeyboardKey.key_up) and rl.isKeyDown(rl.KeyboardKey.key_left)) {
+        self.spaceship.moveUpLeft();
+    } else if (rl.isKeyDown(rl.KeyboardKey.key_down) and rl.isKeyDown(rl.KeyboardKey.key_right)) {
+        self.spaceship.moveDownRight();
+    } else if (rl.isKeyDown(rl.KeyboardKey.key_down) and rl.isKeyDown(rl.KeyboardKey.key_left)) {
+        self.spaceship.moveDownLeft();
+    } else if (rl.isKeyDown(rl.KeyboardKey.key_up)) {
         self.spaceship.moveUp();
-    }
-    if (rl.isKeyDown(rl.KeyboardKey.key_down)) {
+    } else if (rl.isKeyDown(rl.KeyboardKey.key_down)) {
         self.spaceship.moveDown();
-    }
-    if (rl.isKeyDown(rl.KeyboardKey.key_left)) {
+    } else if (rl.isKeyDown(rl.KeyboardKey.key_left)) {
         self.spaceship.moveLeft();
-    }
-    if (rl.isKeyDown(rl.KeyboardKey.key_right)) {
+    } else if (rl.isKeyDown(rl.KeyboardKey.key_right)) {
         self.spaceship.moveRight();
     }
     if (rl.isKeyPressed(rl.KeyboardKey.key_space)) {
